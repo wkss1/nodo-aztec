@@ -1,35 +1,48 @@
 # 🛠️ Guía: Cómo correr un nodo sequencer de Aztec (Ubuntu + Docker)
-cambiar
+
+
+#¿Qué es un Nodo Secuenciador?
+
+Un nodo secuenciador en Aztec Network es responsable de:
+
+- Proponer bloques.
+- Validar bloques propuestos por otros nodos.
+- Votar en actualizaciones de la red.
+- Estos nodos son esenciales para el funcionamiento de la red y permiten a los operadores participar activamente en la testnet.
+
+
 
 ## 📋 Requisitos de hardware
 
 | Componente | Recomendación             |
 |------------|---------------------------|
 | Sistema    | Ubuntu 20.04 o superior   |
-| RAM        | 8 - 16 GB                 |
-| CPU        | 4 - 6 núcleos             |
-| Disco      | 550 GB SSD (crece hasta 1 TB) |
+| RAM        | 16 GB                 |
+| CPU        | 8 núcleos             |
+| Disco      | 1 TB SSD              |
 
 ---
 
-Esta guía corre un nodo sepolia usando docker y utiliza los clientes Geth y Lighthouse, si nunca antes levantaste un nodo, esta es una muy buena manera de iniciar con un paso a paso para entender todo al detalle.
+En esta guía iremos paso a paso de forma sencilla para montar un nodo sequenciador de Aztec L2 de forma local, tambien puedes seguir estos pasos en un VPS (virtual private server, o un servidor alquiulado en la nube)
 
-## Sistema Operativo: Ubuntu
+Para esta guía necesitaremos tener RPCs de sepolia, Aztec es un L2 y para correr necesita estar en contacto con el L1 ya que los L2 dependen del L1, por eso necesitamos RPCs de un nodo de SEPOLIA que es el testnet de Ethereum L1!
 
-Puedes seguir esta guía en tu equipo local, o puedes tambien utilizar un VPS (alquilar un servidor virtual) para tener tu nodo, esto te permitira tener acceso directo a un RPC de Ethereum Sepolia, para desarrollardores, para correr otros nodos L2 sin tener que pagar por un RPC ($50-$250 por mes).
-
-Por EJ. si deseas correr un nodo de algun L2 como puede ser Aztec, este nodo te pide tener un RPC para el cliente de consenso de L1 y un RPC para el cliente de ejecución del L1
+Existen distintos RPC gratis que podemos usar, pero estan limitados y dan problemas para correr aztec, por eso es necesario tener un RPC sin limitaciones, para esto puedes pagar un rpc (entre $50-$250 por mes) o mejor aun, mas barato y aprenderas muchos mas si corres tu propio nodo de sepolia y usas tus propios RPC sin limitaciones y gratis!
 
 Un RPC no es mas que una llamada que permite interactuar con el nodo, en el caso de un desarrollador, tener un RPC te permite usarlo directamente y tener acceso a la blockchain desde tu nodo sin depender de un proveedor pago o uno gratis que suelen estar limitados.
 
-En el caso de Aztec o otros L2 necesitan tener un RPC del L1 para poder correr ya que el L2 depende del L1 y normalmente los RPC gratis no dan a basto por sus limitaciones. asi que si quieres ahorrarte $ y aprender como correr tu primer nodo que puede ser una profesion o ayudarte en tu perfil profesional. Esta guía es para ti
+SI QUIERES CORRER TU PROPIO NODO DE SEPOLIA, SIGUE ESTA GUIA: https://github.com/wkss1/nodo-sepolia/tree/main
 
-## Ethereum L1 (SEPOLIA)
+## Sistema Operativo: Ubuntu
 
-El L1 de ethereum esta compuesto por dos redes o dos capas en paralelo, ethereum en realidad son 2 redes que hablan entre ellas, por eso en esta guía correremos los 2 clientes.
+Puedes seguir esta guía en tu equipo local, o puedes tambien utilizar un VPS (alquilar un servidor virtual) para tener tu nodo, si embargo tambien se puede hacer en equipos windows usando windows subsystem para acceder a ubuntu o mac con ciertos pasos extra.
 
-1. Geth para el cliente de ejecucion
-2. Lighthouse para el cliente de consenso
+
+## Si estas en WINDOWS, instala UBUNTU CON ESTA GUIA:
+
+https://github.com/0xmoei/Install-Linux-on-Windows
+
+Una vez que tienes UBUNTU instalado, o si ya tienes ubuntu local o en tu VPS, vamos con la guía.
 
 
 ## 1️⃣ Instalar dependencias y Docker
@@ -40,7 +53,7 @@ Usaremos docker para la instalacion del nodo, asi que con estos comando actualiz
 
 ```bash
 sudo apt-get update && sudo apt-get upgrade -y
-sudo apt install curl iptables build-essential git wget lz4 jq make gcc nano automake autoconf tmux htop nvme-cli libgbm1 pkg-config libssl-dev libleveldb-dev tar clang bsdmainutils ncdu unzip -y
+sudo apt install curl iptables build-essential git wget lz4 jq make gcc nano automake autoconf tmux htop nvme-cli libgbm1 pkg-config libssl-dev libleveldb-dev tar clang bsdmainutils ncdu unzip libleveldb-dev  -y
 ```
 
 
@@ -49,211 +62,128 @@ sudo apt install curl iptables build-essential git wget lz4 jq make gcc nano aut
 Una ves listo, procedemos a descarga y probar Docker
 
 ```bash
+sudo apt update -y && sudo apt upgrade -y
 for pkg in docker.io docker-doc docker-compose podman-docker containerd runc; do sudo apt-get remove $pkg; done
 
 sudo apt-get update
-sudo apt-get install ca-certificates curl gnupg -y
+sudo apt-get install ca-certificates curl gnupg
 sudo install -m 0755 -d /etc/apt/keyrings
-
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
 sudo chmod a+r /etc/apt/keyrings/docker.gpg
 
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
-https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo $VERSION_CODENAME) stable" \
-| sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+echo \
+  "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
-sudo apt update && sudo apt upgrade -y
-sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
+sudo apt update -y && sudo apt upgrade -y
 
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+# Test Docker
 sudo docker run hello-world
+
 sudo systemctl enable docker
 sudo systemctl restart docker
 ```
-
----
-## Aumenta la capacidad de transferencia de datos
-Aqui vamos a modificar un archivo para asegurarnos que nuestros sockets por defecto tengan un limite mucho mayor de transferencia de datos, esto suele facilitar la instalacion y evitar posible errores.
-
-Primero, abrimos el archivo con este comando.
-```bash
-sudo nano /etc/sysctl.conf
-```
-
-Luego agregamos al final del archivo sin modificar nada mas lo siguiente:
-
-```bash
-net.core.rmem_max=7500000
-net.core.wmem_max=7500000
-```
-Luego de pegarlo, presiona "ctrl" + "X" para cerrar el archivo, de dira si quieres guardar le das Y (Y significa si) y luego le das enter.
-
-Una vez cerrado el archivo, con este comando hacemos que los cambios realizados hagan efecto.
-
-```bash
-sudo sysctl -p
-```
-
 ---
 
-## 2️⃣ Crear directorios y archivo JWT
+## 2️⃣ Instala la herramienta de Aztec
 
-mkdir se utiliza para crear un directorio (es como una carpeta o una ubicacion) llamada ethereum y dentro de ese directorio, creamos uno llamado execution y uno llamado consensus, aqui estara la informacion de cada uno de los clientes.
+Esta es la herramienta que usamos para correr el nodo de Aztec, vamos a instalarla. en el proceso de instalacion te preguntara si quieres continuar, y debes darle Y para aceptar (Y significa si)
 
 ```bash
-mkdir -p ~/ethereum/execution
-mkdir -p ~/ethereum/consensus
+bash -i <(curl -s https://install.aztec.network)
+```
+Luego de instalarla, creamos el PATH
+
+```bash
+echo 'export PATH="$HOME/.aztec/bin:$PATH"' >> ~/.bashrc
+
+source ~/.bashrc
 ```
 
+Una vez echo esto, es necesario REINICIAR EL TERMINAL para aplicar los cambios.
 
-Este paso se encarga de crear el JWT que es un acceso seguro para que tus 2 clientes puedan hablar entre ellos y sincronizarse con Ethereum (Sepolia en este caso, sin embargo la instalacion es similar para Ethereum mainnet, solo cambiarian algunos parametros) como puedes ver se crea dentro del directorio "ethereum"
-
-
-```bash
-openssl rand -hex 32 > ~/ethereum/jwt.hex
-```
-Luego para verificar la creacion de este archivo JWT, usamos este comando (debe de regresarte un valor largo como por ejemplo: "96899fad43bf5d94363d67862bb4efe3c070c22f424fcf031dd335e71137776a")
+Luego si todo salio bien, escribe en tu terminal el comando Aztec y te debera retornar las opciones, asi verificamos que se instalo correctamente.
 
 ```bash
-cat ~/ethereum/jwt.hex
+aztec
 ```
 
 ---
 
-## 3️⃣ Crear archivo `docker-compose.yml`
-Aqui procedemos a crear el archivo de docker compose, en este archivo va toda la informacion de los clientes de ejecucion y consenso de ethereum, como la red en la que queremos (sepolia), los puertos que usaremos, el token JWT que creamos y mas
+## 3️⃣ Actualiza Aztec a la última version:
 
 ```bash
-cd ~/ethereum
-nano docker-compose.yml
+aztec-up alpha-testnet
 ```
 
-Pega el siguiente contenido:
-El comando anterior te abre una ventana completamente vacia, lo cual esta bien por que recien creamos este archivo, ahora vamos a pegar aqui la información
-
-
-```yaml
-services:
-  geth:
-    image: ethereum/client-go:stable
-    container_name: geth
-    restart: unless-stopped
-    network_mode: host
-    volumes:
-      - ./execution:/data
-      - ./jwt.hex:/data/jwt.hex
-    command:
-      - --sepolia
-      - --http
-      - --http.api=eth,net,web3
-      - --http.addr=0.0.0.0
-      - --authrpc.addr=0.0.0.0
-      - --authrpc.vhosts=*
-      - --authrpc.jwtsecret=/data/jwt.hex
-      - --authrpc.port=8551
-      - --syncmode=snap
-      - --datadir=/data
-
-  lighthouse:
-    image: sigp/lighthouse:latest
-    container_name: lighthouse
-    restart: unless-stopped
-    depends_on:
-      - geth
-    network_mode: host
-    volumes:
-      - ./consensus:/data
-      - ./jwt.hex:/data/jwt.hex
-    command: >
-      lighthouse bn
-      --network sepolia
-      --execution-endpoint http://localhost:8551
-      --jwt-secrets=/data/jwt.hex
-      --datadir=/data
-      --checkpoint-sync-url=https://checkpoint-sync.sepolia.ethpandaops.io
-      --http
-      --http-address=0.0.0.0
-      --http-port=5052
-      --metrics
-```
-
-
-Ya pegado el texto, hacemos "CTRL" + "X" para cerrar, grabamos los cambios presionando Y. y luego Enter para cerrarlo y volver al terminal
-
-NOTA: En este caso, en el docker compose no hemos colocado o "mapeado" puertos, ya que configuramos el contenedor en la red HOST, eso quiere decir que los nodos estan en nuestra red de host y no necesita mapear los puertos, esta directamente conectado a nuestro host local. (esto simplifica los pasos a cambio de isolacion, pero en nuestro caso esnun testnet y estamos practicando asi que nos nos afecta en nada, por el contrario nos facilita todo)
+Este comando actualizara la herramienta a la ultima version disponible, lo cual es necesario para evitar errores mas adelante.
 
 ---
 
-## 4️⃣ Comprobar puertos utilizados
+## 4️⃣ Obtener RPC URLs
 
-Con este comando podemos verificar si los puertos estan siendo utilizados para evitar confilctos, si no tienes ningun otro servicio, entonces no estaran utilizados
+Como mencionamos, para correr aztec es necesario tener RPCs de Sepolia L1, por esto debemos primero obtener el URL de estos RPCs.
 
-```bash
-netstat -tuln | grep -E '30303|8545|8546|8551|5052|9000'
-```
+Necesitamos 2 RPCs:
+- 1 para el cliente de ejecucion
+- 1 para el consenso o beaconchain
 
+Estos son los RPCs que  necesitamos darle a nuestro nodo de Aztec, aqui tienes opciones.
+
+- Crea tu propio nodo y usa tus RPCs con esta GUIA: https://github.com/wkss1/nodo-sepolia/tree/main
+- Paga algun proveedor de RPC como Chainstack, Alchemy etc. y simplemente usa esos RPCs para tu nodo
+- Los RPCs gratis no te serviran ya que estan limitados.
+
+    Una vez que ya tenemos los RPC URLs que vamos a utilizar podemos seguir!
+
+Si pagas algun proveedor de RPC, en su pagina encontraras los URLs para estos RPCs, deberas buscar uno para Execution y otro para Consensus o Beaconchain.
+
+Si corres tu nodo local, tu URL sera: http://localhost:XXXX o tu IP pirvado: 192.168.1.1:XXXX
+- donde XXXX sera el puerto que utiliza dicho cliente.
+- o si usas 192.168.... debes remplazarlo por tu propio IP privado.
+- Si corres tu nodo pero no en la misma red local donde esta tu nodo de aztec, deberas usar tu IP PUBLICO envez de local host o el ip privado
+
+GUIA PARA CORRER TU NODO DE SEPOLIA Y OBTENER LOS RPC URLs: https://github.com/wkss1/nodo-sepolia/tree/main
 ---
 
-## 5️⃣ Iniciar los nodos
-Con este comando le decimos a docker que inicie usando el compose que recien creamos. esperamos que se cargue y ya tendremos los contenedores activos y el nodo estara corriendo
+## 5️⃣ Genera tus llaves de Ethereum
+
+Es necesario tener una cuenta o wallet de ethereum sepolia para correr el nodo de Aztec, vamos a necesitar el ADDRESS y la PRIVATE KEY.
+
+Creas una cuenta NUEVA sin fondos en metamask, guarda tu address y copia y guarda tambien el private key.
+
+- Luego necesitamos tener ETH Sepolia o ETH de prueba en la red de sepolia en este wallet que recien creamos, con 0.1 ETH esta mas que bien.
+
+# Puedes obtenerlo en diferentes Faucets:
+
+- https://faucetlink.to/sepolia
+
+
+### 6️⃣ 🔍 Encuentra tu IP Publico:
+
+Otra cosa que necesitamos para correr el nodo de sepolia, es saber cual es nuestro IP Publico del equipo donde estamos corriendo el nodo, podemos encontrarlo con el siguiente comando. (este es el IP publico y se utiliza para que otros servicios fuera de tu red local puedan acceder a tu nodo)
+
 ```bash
-docker compose up -d
+curl ipv4.icanhazip.com
 ```
+Guardalo junto con tu addres y tu clave privada que las necesitaremos mas adelante.
 
-### 🔍 Ver contenedores:
-Con este comando podemos ver los contenedores que estan ahora corriendo, y ver si estan funcionando bien, o si se estan reiniciando.
+### 🔍 Abrir Puertos y Firewall:
 
-```bash
-docker ps
-```
-
-### 🔍 Ver logs:
-Los Logs son como el reporte, aqui podemos ver que esta sucediendo con nuestro nodo, si esta arrancando, si se esta sincronizando o si esta dando algun error y asi poder determinar que esta sucediendo o si algo debemos cambiar. (si seguiste todos los pasos tal cual, en tus logs deberias ver que esta sincronizando)
+Es necesario abrir estos puertos en tu firewall para que el nodo pueda comunicarse de forma correcta.
 
 ```bash
-docker compose logs -f
-```
+# Firewall
+ufw allow 22
+ufw allow ssh
+ufw enable
 
----
-
-## 6️⃣ Verificar sincronización
-
-Con estos comando, podes ver si tu nodo esta corriendo o si esta sincronizado de una forma muy sencilla.
-
-### 🧠 Nodo de ejecución (Geth)
-
-```bash
-curl -X POST -H "Content-Type: application/json" \
---data '{"jsonrpc":"2.0","method":"eth_syncing","params":[],"id":1}' \
-http://localhost:8545
-```
-
-- `"result":false` → ya está sincronizado tu cliente de ejecución
-- Si devuelve un valor (bloques) → está en proceso de sincronización
-
-### 🔗 Nodo de consenso (Lighthouse)
-
-```bash
-curl http://localhost:5052/eth/v1/node/syncing
-```
-
-- `"is_syncing": false` → si dice falso, tu cliente de consenso ya esta sincronizado.
-
-El proceso de sincronizacion puede durar varias horas, si ambos comando anteriormente te funcionaron y te devolvieron un valor, quiere decir que esta funcionando bien, solo debes esperar que sincronize, tambien debes ver los Logs para saber si esta cargando bloques veras un porcentaje de sincronizacion o veras nuevos bloques (revisa si dice error o warn, de lo contrario todo bien). Tambien puedes usar GPT y enviarle el resultado de tus logs o preguntarle que esta pasando o que te ayude a entender algun error.
-
----
-
-## 7️⃣ Configurar firewall
-El firewall es lo que permite las conecciones en tu puertos, y en este caso nuestros cliente hablan entre ellos usando estos puertos, asi que debemos abrirlos o darle permiso con los siguientes comandos.
-
-```bash
-sudo ufw allow 22
-sudo ufw allow ssh
-sudo ufw allow 8545/tcp
-sudo ufw allow 5052/tcp
-sudo ufw allow 30303/tcp
-sudo ufw allow 30303/udp
-sudo ufw allow 9000/tcp
-sudo ufw enable
+# Sequencer
+ufw allow 40400
+ufw allow 8080
 ```
 
 Si tienes algun problema con esto (que no deberias), puedes usar:
@@ -268,66 +198,188 @@ Esto abrira todas las entradas y salidas en todos los puertos, puedes usarlo par
 
 ---
 
-## 8️⃣ Acceder a los endpoints RPC
+## 7️⃣ Ahora, Porfin! a correr el NODO! 
 
-Una ves que tu nodo esta corriendo y actualizado, ya puedes obtener los RPC de consenso (beaconchain) y de ejecucion. Estos RPC son para conectarse a tu nodo, entonces si eres desarrollador uedes usar este rpc, puedes configurar tu wallet para que use tu propio nodo, o si quieres correr otro nodo L2 que necesita hablar con un nodo L1, estos son los RPC que usarias.
+En este caso no vamos a usar docker compose, si no que lo correremos directamente en el terminal con este comando para simplificar el proceso, al hacerlo de esta manera tu nodo queda corriendo en tu terminal y en cierta forma "se bloquea el terminal" ya que solo veras los outputs del nodo y no quieres cerrarlo por que cierras el proceso, queremos dejarlo activo!
 
-En el caso de aztec en su testnet, necesita hablar con el L1 de ethereum en testnet tambien. por eso usamos estos rpc de sepolia testnet de Ethereum l1.
+Podemos hacerlo normal y luego abrir otra ventana del terminal para en esta segunda ventana seguir trabajando y dejar la ventana inicial con el nodo abierto viendo los Logs y revisandolo.
 
-| Nodo       | Endpoint local            | Endpoint externo           |
-|------------|---------------------------|-----------------------------|
-| Geth       | `http://localhost:8545`   | `http://<IP_VPS>:8545`     |
-| Lighthouse | `http://localhost:5052`   | `http://<IP_VPS>:5052`     |
+Tambien si prefieres, podemos usar SCREEN que es un comando que nos permite abrir una ventana vacia para correr el nodo aqui y luego salir de esta ventana y que el nodo siga corriendo en el fondo, asi no tener que dejar abierta la ventana del nodo.
 
-- Endpoint local: usa localhost por que es cuando estas en la misma red
-- Endpoint externo: es cuando quieres usarlo desde otra red externa no tu misma red local
-
-Cuando estas en tu red interna, tambien puedes usar tu IP interno depende de la configuracion, este IP interno suele ser 192.168.1....  mientras que el IP externo sera diferente, no iniciara con 192.168.
-
-Por ejemplo, si vas a correr un nodo de aztec en tu mismo servidor local donde tienes tu nodo de sepolia, usarias como URL de tu RPC algo asi:
-
-- Geth: http://192.168.100.149:8545
-- Lighthouse: http://192.168.100.149:5052
-(192.168.100.149 deberas cambiarlo por tu propio IP privado)
-
-8545: por que es el puerto donde esta el cliente de ejecución
-5052: por que es el puerto donde esta el cliente de consenso
-
-Es el mismo IP local del equipo o servidor pero son diferentes puertos. (tanto el ip interno como usar local host es lo mismo, pero si usaste localhost y te da algun error prueba con el IP o viceversa)
-Ya que en el ejemplo de Aztec, asi este en tu propio equipo, Docker crea una red personalizada (bridge) para este nodo, por ende no podras usar localhost, deberas usar tu IP interno de tu equipo (192.168..)
-
----
-## Encuentra el IP INTERNO de tu servidor o equipo:
-Este comando te retornara varios segmentos de informacion de redes, tu IP Interno o privado, suele ser el que esta en el bloque enp5s0 o enp3s0 y veras una linea que diga inet 192.168...
+Cualquier forma funciona! si prefieres mantenerlo simple, solo hazlo sin SCREEN en tu ventana principal del terminal y luego abres otra ventana para seguir trabajando!
 
 ```bash
-ip addr show
+aztec start --node --archiver --sequencer \
+  --network alpha-testnet \
+  --l1-rpc-urls RPC_URL  \
+  --l1-consensus-host-urls BEACON_URL \
+  --sequencer.validatorPrivateKey YourPrivateKey \
+  --sequencer.coinbase YourevmAddress \
+  --p2p.p2pIp IP
 ```
 
-Sera algo como: inet 192.168.100.149/24 (el IP es solo los digitos sin el /24)  (IP= 192.168.100.149)
+  REEMPLAZA los siguientes valores:
+
+- RPC_URL & BEACON_URL: Aqui colocar los URL a tus RPC (paso 4)
+- YourPrivateKey: Aqui la clave privada de tu wallet creado (Paso 5)
+- YourAddress: La dirección del wallet creado (Paso 5)
+- IP: Tu IP Publico (Paso 6)
 
 
-## Encuentra el IP EXTERNO de tu servidor o equipo:
-Si deseas acceder a tus RPC desde afuera de tu red LAN o local, debes usar el IP publico, asi lo obtenemos:
+### 🧠 Verifica tu nodo y la Sincronización
+
+Si estas corriendo el nodo sin screen y tienes abierta la ventana con los logs, recuerda no cerrarla y en esta ventana puedes ver los resultados que van arrojando los Logs, aqui veras si el nodo se esta actualizando y saliendo nuevos bloques, al inicio debes darle tiempo, si no te arroja ningun error y sigue "pensando" todo esta perfecto solo dale tiempo.
+
+En los Logs veras cuando ya este actualizado el numero de bloque por el cual va tu nodo, y para asegurarte que esta sincronizado, puedes visitar el explorador de bloques de aztec, ver el numero de bloque actual de la red y verificar si tu nodo esta en ese mismo bloque!
+
+- https://aztecscan.xyz/
+
+Si corriste el nodo con SCREEN o simplemente quieres abrir los LOGS desde otro terminal para ver como va, usa estos comando:
 
 ```bash
-curl icanhazip.com
+docker ps
 ```
-Este comando imprimer unicamente tu IP Externo o Pubico para que puedas acceder al nodo desde internet en cualquier otra red.
+
+Este comando te devolvera los contenedores de docker que estan corriendo en este momento, si tienes aztec activo lo veras aqui, si no te sale aztec aqui, no lo estas corriendo bien.
+
+Tambien te dira el ID del contenedor y el Nombre del contenedor.
+
+- Puede ser algo como: 
+
+
+CONTAINER ID   IMAGE                        COMMAND                  CREATED        STATUS        PORTS                NAMES                                                                                                                           
+169f0e72e866   aztecprotocol/aztec:latest   "node --no-warnings …"   24 hours ago   Up 24 hours   0.0.0.0:8080->8080/tcp, [::]:8080->8080/tcp, 0.0.0.0:40400->40400/tcp, [::]:40400->40400/tcp, 0.0.0.0:40400->40400/udp, [::]:40400->40400/udp                       aztec-start-18af871c
+
+
+-En este caso el ID es: 169f0e72e866
+-Y el Nombre es: aztec-start-18af871c
+
+Los tuyos seran diferentes, pero una vez que lo tienes, puedes usar el comando de DOCKER LOGS para abrir los Logs de ese contenedor y ver como va la sincronización o si dio algún error:
+
+```bash
+docker logs <NOMBRE o ID de tu contenedor de aztec>
+```
+
+Si el nodo esta sincronizado veras algo asi, y el numero de bloque coincidira con el bloque actual en el explorador de bloques de aztec (https://aztecscan.xyz/)
+
+EJEMPLO: 
+```bash
+[21:07:22.126] INFO: p2p:libp2p_service:peer_manager Connected to 99 peers {"connections":99,"maxPeerCount":100,"cachedPeers":102,"medianScore":-2.8432599355836136e-32}
+[21:07:37.927] INFO: archiver Downloaded L2 block 46516 {"blockHash":{},"blockNumber":46516,"txCount":1,"globalVariables":{"chainId":11155111,"version":150103439,"blockNumber":46516,"slotNumber":74569,"timestamp":1747429656,"coinbase":"0xc425a109e331c83f2e46261cd5505aaac8da9a4a","feeRecipient":"0x0000000000000000000000000000000000000000000000000000000000000000","feePerDaGas":0,"feePerL2Gas":351610}}
+[21:08:22.137] INFO: p2p:libp2p_service:peer_manager Connected to 100 peers {"connections":100,"maxPeerCount":100,"cachedPeers":140,"medianScore":-2.558933942025252e-32}
+[21:08:26.640] INFO: archiver Updated proven chain to block 46508 {"provenBlockNumber":46508}
+[21:08:50.392] INFO: archiver Downloaded L2 block 46517 {"blockHash":{},"blockNumber":46517,"txCount":1,"globalVariables":{"chainId":11155111,"version":150103439,"blockNumber":46517,"slotNumber":74571,"timestamp":1747429728,"coinbase":"0x0000000000000000000000000000000000000000","feeRecipient":"0x0000000000000000000000000000000000000000000000000000000000000000","feePerDaGas":0,"feePerL2Gas":295720}}
+```
+
+
+### 8️⃣ Reclama tu ROL en el Discord de Aztec
+Una vez sincronizado tu nodo, solo debemos obtener lgunos valores de nuestro nodo e ingresarlo en el discord en el canal de (OPERATORS | START HERE)
+
+En este canal debes escribir en el chat lo siguiente:
+/operator start
+
+cuando lo hagas te saldra en tu campo para escribir en el chat un mensaje con 3 campos vacios:
+- Address: aqui deberas poner la dirección de tu wallet que usaste en el nodo
+- Block Number: Aqui deberas poner el numero de bloque que obtendremos
+- Prove: Aqui pondras el codigo de la prueba del bloque nque obtendremos
+
+# Obtener los valores en tu nodo:
+
+Con este comando obtendremos el numero del ultimo bloque provado por el nodo (el bloque provado no es lo mismo que el ultimo bloque sincronizado, sera un bloque con un numero menor al ultimo sincronizado, esta bien)
+
+```bash
+curl -s -X POST -H 'Content-Type: application/json' \
+-d '{"jsonrpc":"2.0","method":"node_getL2Tips","params":[],"id":67}' \
+http://localhost:8080 | jq -r ".result.proven.number"
+```
+
+El comando utiliza LOCALHOST:8080 ya que 8080 es el puerto que usa AZTEC y LOCALHOST por que estoy corriendo el comando desde la misma maquina donde corro mi nodo, si no lo estas haciendo de forma local, remplaza LOCALHOST con tu IP y manten el puerto 8080.
+
+Luego necesitamos Obtener el codigo de la prueba de ese numero de bloque que obtuvimos:
+
+```bash
+curl -s -X POST -H 'Content-Type: application/json' \
+-d '{"jsonrpc":"2.0","method":"node_getArchiveSiblingPath","params":["BLOCK_NUMBER","BLOCK_NUMBER"],"id":67}' \
+http://localhost:8080 | jq -r ".result"
+```
+
+En este comando debes REEMPLAZAR donde dice BLOCK_NUMBER y poner alli el numero de bloque que obtuvimos en el comando anterior. (ten en cuenta que BLOCK_NUMBER aparece 2 veces en el comando y debes remplazarlo en ambos)
+
+Ya con los valores de ADDRESS, BLOCK y PROVE. puedes ir al discord y seguir los pasos que vimos anteriormente para obtener el rol!
+  
+![Screenshot 2025-05-16 at 3 21 36 PM](https://github.com/user-attachments/assets/81c2bd3a-6842-4f83-91ec-aa2e9d656538)
+
+
+Ya aqui estamos listos, y si quieres obtener el siguiente ROL en su discord, solo debes tener tu nodo activo por mas tiempo y eventualmente podras subir de nivel y reclamar tu rol de GUARDIAN!
+
+#Gurdian:
+Es un Rol en el Discord de Aztec que obtienen aquellos queya tienen rol de Aprentice que tienen su nodo activo y cumple con cierto tiempo de tenerlo estable. Cada cierto tiempo se toma un snapshot para ir identificando aquellos que cumplen el requisito.
+
+#Sentinel: 
+Es un Rol en el Discord de Aztec del cual no hay mucha informacion, mas que si vez uno sabes que es un dios de los nodos.
+
+## 7️⃣ Regístrate como Validador (opcional)
+
+Si quieres ir mas alla, puedes también registrarte como validador de Aztec
+
+ya con tu nodo corriendo y sincronizado, solo debes utilizar este comando si quieres registrarte como validador!
+(no es necesario para el rol)
+
+```bash
+aztec add-l1-validator \
+  --l1-rpc-urls RPC_URL \
+  --private-key your-private-key \
+  --attester your-validator-address \
+  --proposer-eoa your-validator-address \
+  --staking-asset-handler 0xF739D03e98e23A7B65940848aBA8921fF3bAc4b2 \
+  --l1-chain-id 11155111
+```
+
+REEMPLAZA (RPC_URL), (your-validator-address) & 2x(your-validator-address), lo demas lo dejas tal cual y  continuamos!
+
+Recibiras un mensaje de este estilo:
+
+```bash
+Adding validator (xxxxxx83d3442508ad63f3afa7f4e874xxxx, xxxxxd3442508ad63f3afa7f4e874b78269xxxx [forwarder: 0x871e7294B54dA07cFd71A95b6e2E66d86BcE41f8]) to rollup 0x8D1cc702453fa889f137DBD5734CDb7Ee96B6Ba0
+[06:34:36.706] INFO: cli Adding validator (xxxx3d3442508ad63f3afa7f4e874b7826xxxxx, xxxx3d3442508ad63f3afa7f4e874b782xxxx [forwarder: 0x871e7294B54dA07cFd71A95b6e2E66d86BcE41f8]) to rollup 0x8D1cc702453fa889f137DBD5734CDb7Ee96B6Ba0
+Transaction hash: xxx066cfd1d3a0ec29adfe3fe4ac0b11fb91bfbe049f268179eb9xxxxx
+[06:34:37.864] INFO: cli Transaction hash: xxxx66cfd1d3a0ec29adfe3fe4ac0b11fb91bfbe049f268179eb9ee9def27xxx
+```
+
+Ahora mismo, se abren solo 5 espacios al dia para validadores en la red, por eso es muy probable que si intentas hacerlo recibas errores, ya que esta muy competitivo lograr ser validador, esto taambien requiere mayor conocimiento tecnico!
+
+Ahora mismo se abren las 5 plazas al dia a las UTC 21: 49 :12 
+
+Pero no solo se trata de ser el mas rapido, sino tambien de el que paga mas!
+
+Estamos en un testnet en sepolia y los ETH no tienen "valor" o almenos monetario, pero aun asi se estan registrando transferencias en la red donde usuarios ponen un fee altisimos de ETH para lograr que su transaccion se procese primero y asegurarse un espacio como validador, mientras la mayoria de usuarios que no entienden estos temas, solo mandan un comando que hace la transaccion con el gas promedio.
+
+Para esto debemos buscar la documentacion de aztec y ver los comando CLI que tenemos disponibles, y en este caso nos interesa usa el siguiente comando al momento de registrarnos como validador: 
+
+```bash
+--archiver.maxGwei XXXXX \
+--archiver.fixedPriorityFeePerGas XXXXX
+```
+Estos 2 comandos debemos incluirlos cuando usamos el comando para Registrar el validador en el paso 7!
+y en XXXXX pondriamos el valor que queremos usar el cual suplantara al valor de gas base
 
 ---
+
+Si queremos ser mas Degens, podemos tambien crear un script que en un timestamp especifico corra el comando por nosotros con un fee mas elevado y asi asegurarnos de ser los primero en llegar!
+
 
 ## Port Forwarding:
 
-Cuando quieres acceder a tu nodo local desde una red externa, usaras tu IP externo y pondras :8548 (o el puerto que necesitas acceder segun el cliente al que quieres acceder), el temas es que necesitas configurar o hacer "port forward: de estos puertos, para que tu router o tu red local sepa que cuando llega un mensaje a ese puerto, debe enviarlo a tu equipo donde esta tu nodo especificamente.
+Cuando quieres acceder a tu nodo local desde una red externa (o para que tu nodo pueda ser descubierto por otros), usaras tu IP externo y pondras :40400 (o el puerto que necesitas acceder segun el nodo), el tema es que necesitas configurar o hacer "port forward: de estos puertos, para que tu router o tu red local sepa que cuando llega un mensaje del exterior a ese puerto, debe enviarlo a tu equipo donde esta tu nodo especificamente.
 
-Si estas usando un vps (o servidor virtual alquilado, este paso no es necesario ya que los VPS tienen ya un IP publico, pero si estas corriendolo de forma local en una red (como puede ser en tu casa con tu router) entonces si debes de entrar a la configuracion de tu router y hacer port forward de los puertos 8545 para Geth cliente de ejecución y puerto 5052 para Lighthouse cliente de consenso).
+Si estas usando un vps (o servidor virtual alquilado, este paso no es necesario ya que los VPS tienen ya un IP publico, pero si estas corriendolo de forma local en una red (como puede ser en tu casa con tu router) entonces si debes de entrar a la configuracion de tu router y hacer port forward del puerto 40400.
 
 Puedes buscar en youtube como hacer port forward o ayudarte con GPT si nunca lo has echo pero es bastante sencillo. (el proceso es diferente depende de la marca de tu router)
 
-Ya con tu nodo sincronizado y tus RPCs puedes proceder a usar tu nodo y hacer lo que quieras con el! 
-
 ---
 
-¿Listo para usar tu nodo Sepolia para pruebas y desarrollo? 🚀  
+¿Listo para usar tu nodo Aztec? 🚀  
+
 - dudas: @inbestprogram
+
+https://x.com/inbestprogram
