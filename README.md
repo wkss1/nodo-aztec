@@ -355,9 +355,9 @@ Transaction hash: xxx066cfd1d3a0ec29adfe3fe4ac0b11fb91bfbe049f268179eb9xxxxx
 [06:34:37.864] INFO: cli Transaction hash: xxxx66cfd1d3a0ec29adfe3fe4ac0b11fb91bfbe049f268179eb9ee9def27xxx
 ```
 
-Ahora mismo, se abren solo 5 espacios al dia para validadores en la red, por eso es muy probable que si intentas hacerlo recibas errores, ya que esta muy competitivo lograr ser validador, esto taambien requiere mayor conocimiento tecnico!
+Se estan abriendo 5 espacios al dia para validadores en la red, por eso es muy probable que si intentas hacerlo recibas errores, ya que esta muy competitivo lograr ser validador, esto taambien requiere mayor conocimiento tecnico!
 
-Ahora mismo se abren las 5 plazas al dia a las UTC 21: 49 :12 
+- Ahora mismo se abren las 5 plazas al dia a las UTC 21: 49 :12 
 
 Pero no solo se trata de ser el mas rapido, sino tambien de el que paga mas!
 
