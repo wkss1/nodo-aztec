@@ -1,7 +1,7 @@
 # 🛠️ Guía: Cómo correr un nodo sequencer de Aztec (Ubuntu + Docker)
 
 
-#¿Qué es un Nodo Secuenciador?
+# ¿Qué es un Nodo Secuenciador?
 
 Un nodo secuenciador en Aztec Network es responsable de:
 
@@ -9,7 +9,6 @@ Un nodo secuenciador en Aztec Network es responsable de:
 - Validar bloques propuestos por otros nodos.
 - Votar en actualizaciones de la red.
 - Estos nodos son esenciales para el funcionamiento de la red y permiten a los operadores participar activamente en la testnet.
-
 
 
 ## 📋 Requisitos de hardware
