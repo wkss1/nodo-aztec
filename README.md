@@ -136,25 +136,31 @@ Estos son los RPCs que  necesitamos darle a nuestro nodo de Aztec, aqui tienes o
 - Paga algun proveedor de RPC como Chainstack, Alchemy etc. y simplemente usa esos RPCs para tu nodo
 - Los RPCs gratis no te serviran ya que estan limitados.
 
-    Una vez que ya tenemos los RPC URLs que vamos a utilizar podemos seguir!
+Una vez que ya tenemos los RPC URLs que vamos a utilizar podemos seguir!
 
 Si pagas algun proveedor de RPC, en su pagina encontraras los URLs para estos RPCs, deberas buscar uno para Execution y otro para Consensus o Beaconchain.
 
+
 Si corres tu nodo local, tu URL sera: http://localhost:XXXX o tu IP pirvado: 192.168.1.1:XXXX
+
 - donde XXXX sera el puerto que utiliza dicho cliente.
 - o si usas 192.168.... debes remplazarlo por tu propio IP privado.
 - Si corres tu nodo pero no en la misma red local donde esta tu nodo de aztec, deberas usar tu IP PUBLICO envez de local host o el ip privado
 
 GUIA PARA CORRER TU NODO DE SEPOLIA Y OBTENER LOS RPC URLs: https://github.com/wkss1/nodo-sepolia/tree/main
+
 ---
 
 ## 5️⃣ Genera tus llaves de Ethereum
+
 
 Es necesario tener una cuenta o wallet de ethereum sepolia para correr el nodo de Aztec, vamos a necesitar el ADDRESS y la PRIVATE KEY.
 
 Creas una cuenta NUEVA sin fondos en metamask, guarda tu address y copia y guarda tambien el private key.
 
+
 - Luego necesitamos tener ETH Sepolia o ETH de prueba en la red de sepolia en este wallet que recien creamos, con 0.1 ETH esta mas que bien.
+
 
 # Puedes obtenerlo en diferentes Faucets:
 
@@ -169,6 +175,7 @@ Otra cosa que necesitamos para correr el nodo de sepolia, es saber cual es nuest
 curl ipv4.icanhazip.com
 ```
 Guardalo junto con tu addres y tu clave privada que las necesitaremos mas adelante.
+
 
 ### 🔍 Abrir Puertos y Firewall:
 
