@@ -162,12 +162,12 @@ Creas una cuenta NUEVA sin fondos en metamask, guarda tu address y copia y guard
 - Luego necesitamos tener ETH Sepolia o ETH de prueba en la red de sepolia en este wallet que recien creamos, con 0.1 ETH esta mas que bien.
 
 
-# Puedes obtenerlo en diferentes Faucets:
+### Puedes obtenerlo en diferentes Faucets:
 
 - https://faucetlink.to/sepolia
 
 
-### 6️⃣ 🔍 Encuentra tu IP Publico:
+## 6️⃣ 🔍 Encuentra tu IP Publico:
 
 Otra cosa que necesitamos para correr el nodo de sepolia, es saber cual es nuestro IP Publico del equipo donde estamos corriendo el nodo, podemos encontrarlo con el siguiente comando. (este es el IP publico y se utiliza para que otros servicios fuera de tu red local puedan acceder a tu nodo)
 
@@ -177,7 +177,7 @@ curl ipv4.icanhazip.com
 Guardalo junto con tu addres y tu clave privada que las necesitaremos mas adelante.
 
 
-### 🔍 Abrir Puertos y Firewall:
+## 🔍 Abrir Puertos y Firewall:
 
 Es necesario abrir estos puertos en tu firewall para que el nodo pueda comunicarse de forma correcta.
 
@@ -278,18 +278,20 @@ EJEMPLO:
 ```
 
 
-### 8️⃣ Reclama tu ROL en el Discord de Aztec
+## 8️⃣ Reclama tu ROL en el Discord de Aztec
 Una vez sincronizado tu nodo, solo debemos obtener lgunos valores de nuestro nodo e ingresarlo en el discord en el canal de (OPERATORS | START HERE)
 
 En este canal debes escribir en el chat lo siguiente:
 /operator start
 
+
 cuando lo hagas te saldra en tu campo para escribir en el chat un mensaje con 3 campos vacios:
+
 - Address: aqui deberas poner la dirección de tu wallet que usaste en el nodo
 - Block Number: Aqui deberas poner el numero de bloque que obtendremos
 - Prove: Aqui pondras el codigo de la prueba del bloque nque obtendremos
 
-# Obtener los valores en tu nodo:
+### Obtener los valores en tu nodo:
 
 Con este comando obtendremos el numero del ultimo bloque provado por el nodo (el bloque provado no es lo mismo que el ultimo bloque sincronizado, sera un bloque con un numero menor al ultimo sincronizado, esta bien)
 
@@ -318,11 +320,12 @@ Ya con los valores de ADDRESS, BLOCK y PROVE. puedes ir al discord y seguir los 
 
 Ya aqui estamos listos, y si quieres obtener el siguiente ROL en su discord, solo debes tener tu nodo activo por mas tiempo y eventualmente podras subir de nivel y reclamar tu rol de GUARDIAN!
 
-#Gurdian:
+### Gurdian:
 Es un Rol en el Discord de Aztec que obtienen aquellos queya tienen rol de Aprentice que tienen su nodo activo y cumple con cierto tiempo de tenerlo estable. Cada cierto tiempo se toma un snapshot para ir identificando aquellos que cumplen el requisito.
 
-#Sentinel: 
+### Sentinel: 
 Es un Rol en el Discord de Aztec del cual no hay mucha informacion, mas que si vez uno sabes que es un dios de los nodos.
+
 
 ## 7️⃣ Regístrate como Validador (opcional)
 
