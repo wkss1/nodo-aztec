@@ -320,7 +320,7 @@ Ya con los valores de ADDRESS, BLOCK y PROVE. puedes ir al discord y seguir los 
 
 Ya aqui estamos listos, y si quieres obtener el siguiente ROL en su discord, solo debes tener tu nodo activo por mas tiempo y eventualmente podras subir de nivel y reclamar tu rol de GUARDIAN!
 
-### Gurdian:
+### Guardian:
 Es un Rol en el Discord de Aztec que obtienen aquellos queya tienen rol de Aprentice que tienen su nodo activo y cumple con cierto tiempo de tenerlo estable. Cada cierto tiempo se toma un snapshot para ir identificando aquellos que cumplen el requisito.
 
 ### Sentinel: 
