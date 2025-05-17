@@ -32,6 +32,8 @@ Un RPC no es mas que una llamada que permite interactuar con el nodo, en el caso
 
 SI QUIERES CORRER TU PROPIO NODO DE SEPOLIA, SIGUE ESTA GUIA: https://github.com/wkss1/nodo-sepolia/tree/main
 
+---
+
 ## Sistema Operativo: Ubuntu
 
 Puedes seguir esta guía en tu equipo local, o puedes tambien utilizar un VPS (alquilar un servidor virtual) para tener tu nodo, si embargo tambien se puede hacer en equipos windows usando windows subsystem para acceder a ubuntu o mac con ciertos pasos extra.
@@ -43,6 +45,7 @@ https://github.com/0xmoei/Install-Linux-on-Windows
 
 Una vez que tienes UBUNTU instalado, o si ya tienes ubuntu local o en tu VPS, vamos con la guía.
 
+---
 
 ## 1️⃣ Instalar dependencias y Docker
 
@@ -85,6 +88,7 @@ sudo docker run hello-world
 sudo systemctl enable docker
 sudo systemctl restart docker
 ```
+
 ---
 
 ## 2️⃣ Instala la herramienta de Aztec
@@ -166,6 +170,7 @@ Creas una cuenta NUEVA sin fondos en metamask, guarda tu address y copia y guard
 
 - https://faucetlink.to/sepolia
 
+---
 
 ## 6️⃣ 🔍 Encuentra tu IP Publico:
 
@@ -176,6 +181,7 @@ curl ipv4.icanhazip.com
 ```
 Guardalo junto con tu addres y tu clave privada que las necesitaremos mas adelante.
 
+---
 
 ## 🔍 Abrir Puertos y Firewall:
 
@@ -279,6 +285,7 @@ EJEMPLO:
 
 
 ## 8️⃣ Reclama tu ROL en el Discord de Aztec
+
 Una vez sincronizado tu nodo, solo debemos obtener lgunos valores de nuestro nodo e ingresarlo en el discord en el canal de (OPERATORS | START HERE)
 
 En este canal debes escribir en el chat lo siguiente:
@@ -290,6 +297,8 @@ cuando lo hagas te saldra en tu campo para escribir en el chat un mensaje con 3 
 - Address: aqui deberas poner la dirección de tu wallet que usaste en el nodo
 - Block Number: Aqui deberas poner el numero de bloque que obtendremos
 - Prove: Aqui pondras el codigo de la prueba del bloque nque obtendremos
+
+---
 
 ### Obtener los valores en tu nodo:
 
@@ -326,6 +335,17 @@ Es un Rol en el Discord de Aztec que obtienen aquellos queya tienen rol de Apren
 ### Sentinel: 
 Es un Rol en el Discord de Aztec del cual no hay mucha informacion, mas que si vez uno sabes que es un dios de los nodos.
 
+---
+
+## Port Forwarding:
+
+Cuando quieres acceder a tu nodo local desde una red externa (o para que tu nodo pueda ser descubierto por otros), usaras tu IP externo y pondras :40400 (o el puerto que necesitas acceder segun el nodo), el tema es que necesitas configurar o hacer "port forward: de estos puertos, para que tu router o tu red local sepa que cuando llega un mensaje del exterior a ese puerto, debe enviarlo a tu equipo donde esta tu nodo especificamente.
+
+Si estas usando un vps (o servidor virtual alquilado, este paso no es necesario ya que los VPS tienen ya un IP publico, pero si estas corriendolo de forma local en una red (como puede ser en tu casa con tu router) entonces si debes de entrar a la configuracion de tu router y hacer port forward del puerto 40400.
+
+Puedes buscar en youtube como hacer port forward o ayudarte con GPT si nunca lo has echo pero es bastante sencillo. (el proceso es diferente depende de la marca de tu router)
+
+---
 
 ## 7️⃣ Regístrate como Validador (opcional)
 
@@ -374,16 +394,8 @@ y en XXXXX pondriamos el valor que queremos usar el cual suplantara al valor de 
 
 ---
 
-Si queremos ser mas Degens, podemos tambien crear un script que en un timestamp especifico corra el comando por nosotros con un fee mas elevado y asi asegurarnos de ser los primero en llegar!
+Si queremos ser mas Degens, podemos tambien crear un script que en un timestamp especifico corra el comando por nosotros con un fee mas elevado y usando algo como foundry para enviar la transacción manual o de forma directa a la blockchain a travez de nuestro RPC, asi asegurarnos de ser los primero en llegar!
 
-
-## Port Forwarding:
-
-Cuando quieres acceder a tu nodo local desde una red externa (o para que tu nodo pueda ser descubierto por otros), usaras tu IP externo y pondras :40400 (o el puerto que necesitas acceder segun el nodo), el tema es que necesitas configurar o hacer "port forward: de estos puertos, para que tu router o tu red local sepa que cuando llega un mensaje del exterior a ese puerto, debe enviarlo a tu equipo donde esta tu nodo especificamente.
-
-Si estas usando un vps (o servidor virtual alquilado, este paso no es necesario ya que los VPS tienen ya un IP publico, pero si estas corriendolo de forma local en una red (como puede ser en tu casa con tu router) entonces si debes de entrar a la configuracion de tu router y hacer port forward del puerto 40400.
-
-Puedes buscar en youtube como hacer port forward o ayudarte con GPT si nunca lo has echo pero es bastante sencillo. (el proceso es diferente depende de la marca de tu router)
 
 ---
 
