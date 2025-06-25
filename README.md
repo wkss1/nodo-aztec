@@ -119,7 +119,7 @@ aztec
 ## 3️⃣ Actualiza Aztec a la última version:
 
 ```bash
-aztec-up alpha-testnet
+aztec-up latest
 ```
 
 Este comando actualizara la herramienta a la ultima version disponible, lo cual es necesario para evitar errores mas adelante.
@@ -330,7 +330,7 @@ Ya con los valores de ADDRESS, BLOCK y PROVE. puedes ir al discord y seguir los 
 Ya aqui estamos listos, y si quieres obtener el siguiente ROL en su discord, solo debes tener tu nodo activo por mas tiempo y eventualmente podras subir de nivel y reclamar tu rol de GUARDIAN!
 
 ### Guardian:
-Es un Rol en el Discord de Aztec que obtienen aquellos queya tienen rol de Aprentice que tienen su nodo activo y cumple con cierto tiempo de tenerlo estable. Cada cierto tiempo se toma un snapshot para ir identificando aquellos que cumplen el requisito.
+Es un Rol en el Discord de Aztec que obtienen aquellos queya tienen rol de Aprentice que tienen su nodo activo y cumple con cierto tiempo de tenerlo estable. Cada cierto tiempo se toma un snapshot para ir identificando aquellos que cumplen el requisito. Para obtenerlo debes correr tu nodo de forma estable y constante.
 
 ### Sentinel: 
 Es un Rol en el Discord de Aztec del cual no hay mucha informacion, mas que si vez uno sabes que es un dios de los nodos.
@@ -400,7 +400,7 @@ Si queremos ser mas Degens, podemos tambien crear un script que en un timestamp 
 ---
 
 ¿Listo para usar tu nodo Aztec? 🚀  
+gAztec
 
-- dudas: @inbestprogram
-
+@inbestprogram
 https://x.com/inbestprogram
