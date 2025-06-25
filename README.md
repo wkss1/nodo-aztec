@@ -36,14 +36,7 @@ SI QUIERES CORRER TU PROPIO NODO DE SEPOLIA, SIGUE ESTA GUIA: https://github.com
 
 ## Sistema Operativo: Ubuntu
 
-Puedes seguir esta guía en tu equipo local, o puedes tambien utilizar un VPS (alquilar un servidor virtual) para tener tu nodo, si embargo tambien se puede hacer en equipos windows usando windows subsystem para acceder a ubuntu o mac con ciertos pasos extra.
-
-
-## Si estas en WINDOWS, instala UBUNTU CON ESTA GUIA:
-
-https://github.com/0xmoei/Install-Linux-on-Windows
-
-Una vez que tienes UBUNTU instalado, o si ya tienes ubuntu local o en tu VPS, vamos con la guía.
+Puedes seguir esta guía en tu equipo local, o puedes tambien utilizar un VPS (alquilar un servidor virtual) para tener tu nodo, si embargo tambien se puede hacer en equipos windows usando windows subsystem para acceder a ubuntu o mac con ciertos pasos extra. Hoy nos enfocamos en como hacerlo con Ubuntu.
 
 ---
 
