@@ -390,6 +390,7 @@ y en XXXXX pondriamos el valor que queremos usar el cual suplantara al valor de 
 Si queremos ser mas Degens, podemos tambien crear un script que en un timestamp especifico corra el comando por nosotros con un fee mas elevado y usando algo como foundry para enviar la transacción manual o de forma directa a la blockchain a travez de nuestro RPC, asi asegurarnos de ser los primero en llegar!
 
 
+ # Video con el paso a paso: https://www.youtube.com/watch?v=6C7xb2kKAfw
 ---
 
 ¿Listo para usar tu nodo Aztec? 🚀  
